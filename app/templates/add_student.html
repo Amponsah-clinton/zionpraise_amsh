@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %}Add Student{% endblock %}
+
+{% block content %}
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert {{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+
+    <div class="container mt-4">
+        <h2 class="text-center">Add Student</h2>
+        <form method="post" class="p-4 border rounded bg-light" style="max-width: 600px; margin: 0 auto;">
+            {% csrf_token %}
+            
+            <div class="row">
+                <!-- Student Name -->
+                <div class="col-12 mb-3">
+                    <label class="form-label">Student Name</label>
+                    {{ form.name }}
+                </div>
+                
+                <!-- Grade -->
+                <div class="col-12 col-md-6 mb-3">
+                    <label class="form-label">Grade</label>
+                    {{ form.grade }}
+                </div>
+
+                <!-- Parent Name -->
+                <div class="col-12 col-md-6 mb-3">
+                    <label class="form-label">Parent Name</label>
+                    {{ form.parent_name }}
+                </div>
+
+                <!-- Parent Email -->
+                <div class="col-12 mb-3">
+                    <label class="form-label">Parent Email</label>
+                    {{ form.parent_email }}
+                </div>
+
+                <!-- Parent Phone -->
+                <div class="col-12 mb-3">
+                    <label class="form-label">Parent Phone</label>
+                    {{ form.parent_phone }}
+                </div>
+
+                <!-- Submit Button -->
+                <div class="col-12">
+                    <button type="submit" class="btn btn-outline-secondary w-100">Add Student</button>
+                </div>
+            </div>
+        </form>
+
+        <p class="text-center" style="padding-top: 20px;">Upload Bulk Data: <a class="btn btn-outline-info" href="{% url 'upload_students' %}">Upload Students</a></p> <!-- Link to the upload page -->
+    </div>
+
+{% endblock %}

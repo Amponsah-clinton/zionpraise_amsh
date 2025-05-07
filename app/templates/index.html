@@ -1,0 +1,269 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container text-center mt-5">
+   
+<link href="https://fonts.googleapis.com/css2?family=Allura&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+<div class="typography-container">
+  <h4 class="typography-text" data-default-gradient="linear-gradient(90deg, #ff1493, #8a2be2, #ff8c00, #00c8ff)">
+    Zion Praise Educational Complex Management System
+  </h4>
+
+
+<style>
+   .typography-container {
+  text-align: center;
+  animation: fadeIn 2s ease-out, moveUp 2s ease-out;
+  font-family: 'Allura', cursive;
+  
+}  #ss{
+    font-family: 'Times New Roman', Times, serif !important;
+   
+  }
+
+   
+
+@media (max-width: 767.98px) {
+  /* Hide login button */
+  #ss{
+    font-family: 'Times New Roman', Times, serif !important;
+    font-size: 1.19rem;
+  }
+   #quote-text{
+display: none !important;
+   }
+
+  /* Reduce h4 font size and line height */
+  .typography-text {
+    font-size: 23px !important;
+    line-height: 1.4 !important;
+  }
+
+  /* Reduce quotes text */
+  .quote-text {
+    font-size: 0.85rem;
+    line-height: 1.3;
+  }
+}
+
+
+.typography-text {
+  font-size: 3rem;
+  background: linear-gradient(90deg, #ff1493, #8a2be2, #ff8c00, #00c8ff); /* Default gradient */
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  font-weight: 600;
+  background-size: 200%;
+  cursor: pointer;
+  transition: transform 0.3s ease, filter 0.3s ease;
+}
+
+.typography-text:hover {
+  transform: scale(1.08); 
+}
+
+.typography-text:active {
+  transform: scale(1.05);
+}
+
+h5 {
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+}
+
+p {
+    font-family: 'Times New Roman', Times, serif !important;
+}
+
+
+.gradient-selector {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.gradient-circle {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  cursor: pointer;
+  opacity: 0.25;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.gradient-circle:hover {
+  transform: scale(1.2);
+  opacity: 1;
+}
+
+@media (max-width: 768px) {
+  .gradient-circle {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .gradient-circle {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+@keyframes fadeIn {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+@keyframes moveUp {
+  0% { transform: translateY(30px); }
+  100% { transform: translateY(0); }
+}
+
+</style>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const typographyText = document.querySelector(".typography-text");
+    document.querySelectorAll(".gradient-circle").forEach(circle => {
+      circle.style.background = circle.getAttribute("data-gradient");
+      circle.addEventListener("click", function () {
+        typographyText.style.background = this.getAttribute("data-gradient");
+      });
+    });
+  });
+</script>
+
+<div class="row justify-content-center mt-5">
+    <div class="col-md-4">
+        <div class="card shadow-lg p-3 mb-5 bg-white rounded">
+            <div class="card-body">
+                <i class="fas fa-user-friends fa-3x mb-3 text-primary"></i>
+                <h5 class="card-title">Parent Login</h5>
+                <p class="card-text">Access your child's academic records and school updates.</p>
+                <a id='ss' href="{% url 'parent_login' %}" class="btn btn-outline-primary">Login</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card shadow-lg p-3 mb-5 bg-white rounded">
+            <div class="card-body">
+                <i class="fas fa-chalkboard-teacher fa-3x mb-3 text-success"></i>
+                <h5 class="card-title">Teacher Login</h5>
+                <p class="card-text">Manage and Analyze student grades, attendance, and schedules.</p>
+                <a id='ss' href="{% url 'teacher_login' %}" class="btn btn-outline-success">Login</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card shadow-lg p-3 mb-5 bg-white rounded">
+            <div class="card-body">
+                <i class="fas fa-user-shield fa-3x mb-3 text-danger"></i>
+                <h5 class="card-title">Admin Login</h5>
+                <p class="card-text">Manage the entire school system with admin privileges.</p>
+                <a id='ss' href="{% url 'admin:index' %}" class="btn btn-outline-danger">Login</a>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+<div class="marquee-wrapper">
+  <div class="marquee-content" id="marquee-text" style="font-size: 13px;">
+    "Education is the most powerful weapon which you can use to change the world." – Nelson Mandela
+  </div>
+</div>
+
+<script>
+ const quotes = [
+  "Education is the most powerful weapon which you can use to change the world. – Nelson Mandela",
+  "Success is not the key to happiness. Happiness is the key to success. – Albert Schweitzer",
+  "The beautiful thing about learning is that no one can take it away from you. – B.B. King",
+  "An investment in knowledge pays the best interest. – Benjamin Franklin",
+  "The only way to do great work is to love what you do. – Steve Jobs",
+  "Success is stumbling from failure to failure with no loss of enthusiasm. – Winston Churchill"
+];
+
+const quoteElement = document.getElementById('quote-text');
+if (quoteElement) {
+  const randomIndex = Math.floor(Math.random() * quotes.length);
+  quoteElement.textContent = quotes[randomIndex];
+}
+
+
+  let index = 0;
+  const marqueeText = document.getElementById("marquee-text");
+
+  function updateMarquee() {
+    marqueeText.classList.remove("enter-animation", "stay-animation", "exit-animation");
+
+    setTimeout(() => {
+      index = (index + 1) % quotes.length;
+      marqueeText.textContent = `"${quotes[index]}"`;
+      marqueeText.classList.add("enter-animation");
+
+      setTimeout(() => {
+        marqueeText.classList.add("stay-animation");
+
+        setTimeout(() => {
+          marqueeText.classList.add("exit-animation");
+        }, 5000); // Stays for 5 seconds
+      }, 1000); // Time to enter
+    }, 100);
+  }
+
+  setInterval(updateMarquee, 7000); // Total cycle time (1s enter + 5s stay + 1s exit)
+</script>
+
+<style>
+  .marquee-wrapper {
+    width: 100%;
+    overflow: hidden;
+    padding: 10px 0;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #333;
+    text-align: center;
+    position: relative;
+    height: 60px; /* Increased height to prevent cut-off */
+    display: flex;
+    align-items: center;
+  }
+
+  .marquee-content {
+    position: absolute;
+    width: 100%;
+    opacity: 0;
+    transform: translateY(100%);
+    white-space: nowrap; /* Prevents text wrapping */
+  }
+
+  .enter-animation {
+    animation: enterText 1s ease forwards;
+  }
+
+  .stay-animation {
+    opacity: 1;
+  }
+
+  .exit-animation {
+    animation: exitText 1s ease forwards;
+  }
+
+  @keyframes enterText {
+    from { opacity: 0; transform: translateY(100%); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes exitText {
+    from { opacity: 1; transform: translateY(0); }
+    to { opacity: 0; transform: translateY(-100%); }
+  }
+</style>
+   {% if use.is_superuser %}
+<a id='ss' href="{% url 'performance' %}" class="btn btn-outline-info">Go to Performance Analysis</a>
+   {% endif %}
+
+{% endblock %}

@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="text-center">📅 Add New Event</h2>
+
+    {% if messages %}
+    <div class="mb-3">
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    </div>
+
+    <script>
+        setTimeout(function() {
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(alert => {
+                alert.classList.remove('show');
+                alert.classList.add('fade');
+            });
+        }, 6000); // 6 seconds
+    </script>
+    {% endif %}
+
+    <!-- Card for the form -->
+    <div class="card p-4">
+        <form method="POST">
+            {% csrf_token %}
+            <div class="row">
+                <!-- Event Title -->
+                <div class="col-12 col-md-6 mb-3">
+                    <label for="id_title" class="form-label">
+                        Event Title:
+                        {% if form.title.field.required %}
+                            <span style="color: red;">*</span>
+                        {% endif %}
+                    </label>
+                    {{ form.title }}
+                </div>
+
+                <!-- Event Date -->
+                <div class="col-12 col-md-6 mb-3">
+                    <label for="id_date" class="form-label">
+                        Event Date:
+                        {% if form.date.field.required %}
+                            <span style="color: red;">*</span>
+                        {% endif %}
+                    </label>
+                    {{ form.date }}
+                </div>
+
+                <!-- Event Description -->
+                <div class="col-12 mb-3">
+                    <label for="id_description" class="form-label">
+                        Description:
+                        {% if form.description.field.required %}
+                            <span style="color: red;">*</span>
+                        {% endif %}
+                    </label>
+                    {{ form.description }}
+                </div>
+
+                <!-- Submit Button -->
+                <div class="col-12">
+                    <button type="submit" class="btn btn-outline-info w-100">📌 Add Event</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

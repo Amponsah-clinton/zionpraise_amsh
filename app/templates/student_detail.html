@@ -1,0 +1,330 @@
+{% extends "base.html" %}
+{% load custom_filters %}
+
+{% block title %}Student Details - {{ student.name }}{% endblock %}
+
+{% block content %}
+<form method="get" class="mb-3 text-center">
+    <label for="term-select"><strong>Filter by Term:</strong></label>
+    <select name="term" id="term-select" onchange="this.form.submit()" class="form-select d-inline-block w-auto ms-2">
+        <option value="">All Terms</option>
+        {% for term in terms %}
+            <option value="{{ term.id }}" {% if term == selected_term %}selected{% endif %}>
+                {{ term.name.upper }}
+            </option>
+        {% endfor %}
+    </select>
+</form>
+
+{% if siblings|length > 1 %}
+    <form method="get" action="{% url 'student_detail' student_id=student.id %}" class="mb-3 text-center">
+        <label for="student-select"><strong>Switch Student:</strong></label>
+        <select id="student-select" name="student" class="form-select d-inline-block w-auto ms-2" onchange="location.href=this.value;">
+            {% for s in siblings %}
+                <option value="{% url 'student_detail' student_id=s.id %}" {% if s.id == student.id %}selected{% endif %}>
+                    {{ s.name }} ({{ s.grade }})
+                </option>
+            {% endfor %}
+        </select>
+    </form>
+{% endif %}
+
+
+
+<div class="container mt-4">
+    <h2 class="text-center">👨‍🎓 {{ student.name }}'s Details</h2>
+
+    <div class="container mt-3">
+        <div class="card">
+            <div class="card-body p-2">
+                <div class="row text-center">
+                    <div class="col-4">
+                        <p class="mb-1"><strong>🆔 ID:</strong> {{ student.student_id }}</p>
+                    </div>
+                    <div class="col-4">
+                        <p class="mb-1"><strong>🎓 Grade:</strong> {{ student.grade.upper }}</p>
+                    </div>
+                    <div class="col-4">
+                        <p class="mb-1"><strong>📌 Total Students:</strong> {{ total_students }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        window.onload = function() {
+            alert("Zion Praise Educational Complex welcomes you, {{ student.parent_name }}!");
+        };
+    </script>
+
+    <div class="container mt-3">
+        <div class="card">
+            <div class="card-body p-2">
+                <div class="row text-center">
+                    <div class="col-4">
+                        <p class="mb-1"><strong>📧 Parent Name:</strong> {{ student.parent_name|default:"N/A" }}</p>
+                    </div>
+                    <div class="col-4">
+                        <p class="mb-1"><strong>📧 Parent Email:</strong> {{ student.parent_email|default:"N/A" }}</p>
+                    </div>
+                    <div class="col-4">
+                        <p class="mb-1"><strong>📞 Parent Phone:</strong> {{ student.parent_phone }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-hover table-bordered text-center">
+            <thead class="table-dark">
+                <tr>
+                    <th class="sticky-col">📖 Subject</th>
+                    {% for assessment_key, _ in assessment_choices %}
+                        <th>{{ assessment_key|title }}</th>
+                    {% endfor %}
+                    <th>Rank</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for subject, scores in subject_scores.items %}
+                    <tr>
+                        <td class="sticky-col"><strong>{{ subject }}</strong></td>
+                        {% for assessment_key, _ in assessment_choices %}
+                            <td>{% if scores|get_item:assessment_key %}{{ scores|get_item:assessment_key }}{% else %}-{% endif %}</td>
+                        {% endfor %}
+                        <td>
+                            {% if rank_per_assessment|get_item:assessment_key %}
+                                {{ rank_per_assessment|get_item:assessment_key }}
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+            <tfoot class="table-light">
+                <tr>
+                    <td class="sticky-col"><strong>Total</strong></td>
+                    {% for assessment_key, _ in assessment_choices %}
+                        <td style="color: rgb(255, 142, 5); font-weight: 700; font-size: 17px;">
+                            {% with total_scores|get_item:assessment_key as total_score %}
+                                {% if total_score != 0 %}
+                                    {{ total_score }}
+                                {% else %}
+                                    -
+                                {% endif %}
+                            {% endwith %}
+                        </td>
+                    {% endfor %}
+                </tr>
+                <tr>
+                    <td class="sticky-col"><strong>📊Rank</strong></td>
+                    {% for assessment_key, _ in assessment_choices %}
+                        <td style="color: red; font-weight: 700; font-size:19px">
+                            {% if rank_per_assessment|get_item:assessment_key %}
+                                {{ rank_per_assessment|get_item:assessment_key }}
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
+                    {% endfor %}
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+    
+    
+<style>
+    .sticky-col {
+    position: sticky;
+    left: 0;
+    background-color: white;
+    z-index: 2; /* Ensure it stays above other columns */
+    box-shadow: 2px 0 5px rgba(0,0,0,0.1); /* Optional: subtle shadow */
+}
+
+</style>
+<div class="text-center pt-2 pt-sm-4">
+    <a href="{% url 'download_student_scores' student_id=student.id %}" class="btn btn-outline-primary">
+        Export as CSV
+    </a>
+</div>
+
+
+
+    <!-- Graph Display -->
+    <h3 style="padding-top: 30px;" class="mt-4 text-center">📈 Score Distribution</h3 >
+        <div class="container">
+            <canvas id="scoreChart"></canvas>
+          </div>
+ 
+          <style>
+            canvas {
+ 
+@media (max-width: 768px) {
+  #scoreChart {
+    display: block !important;
+  }
+}
+
+          </style>
+
+
+
+    {% if show_dashboard_button %}
+    <div style="padding-bottom: 30px;">
+        <a href="{% url 'assessment_details' %}" class="btn btn-secondary mt-3">⬅ Back to Dashboard</a>
+    </div>
+{% endif %}
+
+
+</div>
+
+
+
+
+<div class="mt-4">
+    <h3 class="text-center text-lg font-semibold">📅 Academic Calendar</h3>
+    <div id="calendar" class="mx-auto max-w-full" style="height: 400px;"></div>
+  </div>
+  
+<!-- Include FullCalendar library -->
+<link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var calendarEl = document.getElementById('calendar');
+
+    var calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: 'dayGridMonth',  // Month view
+        headerToolbar: {
+            left: 'prev,next today',
+            center: 'title',
+            right: 'dayGridMonth,timeGridWeek,listWeek'
+        },
+        height: 'auto',  // Ensure the calendar height adjusts automatically
+        events: [
+            {% for event in academic_calendar %}
+            {
+                title: "{{ event.title }}",
+                start: "{{ event.date|date:'Y-m-d' }}",
+                description: "{{ event.description }}",
+                color: "#FF0000FF" // Customize color
+            },
+            {% endfor %}
+        ],
+        eventClick: function(info) {
+            alert(info.event.title + "\n" + info.event.extendedProps.description);
+        }
+    });
+
+    calendar.render();
+});
+</script>
+
+
+
+
+<style>
+    /* Make FullCalendar header responsive */
+    @media (max-width: 768px) {
+      .fc-header-toolbar {
+        flex-direction: column;
+        align-items: center;
+      }
+  
+      .fc-toolbar-chunk {
+        margin-bottom: 5px;
+        text-align: center;
+      }
+  
+      .fc-toolbar-title {
+        font-size: 1.1rem;
+      }
+  
+      .fc .fc-button {
+        padding: 4px 8px;
+        font-size: 0.85rem;
+      }
+    }
+  </style>
+  
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    var ctx = document.getElementById('scoreChart').getContext('2d');
+
+    // Define colors for each assessment category
+    var colors = [
+        'rgba(255, 99, 132, 0.5)',  // Red
+        'rgba(54, 162, 235, 0.5)',  // Blue
+        'rgba(255, 206, 86, 0.5)',  // Yellow
+        'rgba(75, 192, 192, 0.5)',  // Green
+        'rgba(153, 102, 255, 0.5)', // Purple
+        'rgba(255, 159, 64, 0.5)'   // Orange
+    ];
+
+    var borderColors = [
+        'rgba(255, 99, 132, 1)',
+        'rgba(54, 162, 235, 1)',
+        'rgba(255, 206, 86, 1)',
+        'rgba(75, 192, 192, 1)',
+        'rgba(153, 102, 255, 1)',
+        'rgba(255, 159, 64, 1)'
+    ];
+
+    var chartData = {
+        labels: [{% for subject in subject_scores.keys %}"{{ subject }}"{% if not forloop.last %}, {% endif %}{% endfor %}],
+        datasets: [
+            {% for assessment_key, assessment_label in assessment_choices %}
+            {
+                label: "{{ assessment_label }}",
+                backgroundColor: colors[{{ forloop.counter0 }} % colors.length], 
+                borderColor: borderColors[{{ forloop.counter0 }} % borderColors.length],
+                borderWidth: 1,
+                data: [{% for subject, scores in subject_scores.items %}{{ scores|get_item:assessment_key|default:"0" }}{% if not forloop.last %}, {% endif %}{% endfor %}]
+            },
+            {% endfor %}
+        ]
+    };
+
+    var scoreChart = new Chart(ctx, {
+        type: 'bar',
+        data: chartData,
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'top', // Places legend at the top
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(tooltipItem) {
+                            return tooltipItem.dataset.label + ": " + tooltipItem.raw + "%";
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: { 
+                    beginAtZero: true,
+                    max: 100, // Ensures max is 100
+                    ticks: {
+                        callback: function(value) {
+                            return value + "%"; // Displays y-axis as percentages
+                        }
+                    }
+                }
+            }
+        }
+    });
+</script>
+
+
+{% endblock %}

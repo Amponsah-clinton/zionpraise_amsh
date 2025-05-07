@@ -1,0 +1,407 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center mb-4">📚 Teacher Dashboard</h2>
+
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-12 mb-3">
+                <div class="card shadow-lg ">
+                    <div class="card-body">
+                        <div class="row text-center">
+                            <div class="col-md-4 mb-3">
+                                <h5 class="card-title">👨‍🏫 {{ teacher.name }}</h5>
+                            </div> 
+                            <div class="col-md-4 mb-3">
+                                <p class="card-text">
+                                    <strong>📌 Subject:</strong> {{ teacher.subject }}
+                                </p>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <p class="card-text">
+                                    <strong>✉️ Email:</strong> {{ teacher.email }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>  
+    </div>
+    
+
+    {% if messages %}
+    <div id="message-container" class="position-fixed top-0 start-50 translate-middle-x mt-3" style="z-index: 1050;">
+        {% for message in messages %}
+            <div class="alert 
+                {% if message.tags %}alert-{{ message.tags }}{% endif %} 
+                alert-dismissible fade show text-center shadow-lg" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    </div>
+
+    <script>
+        // Auto-dismiss messages after 5 seconds
+        setTimeout(function() {
+            let messageContainer = document.getElementById('message-container');
+            if (messageContainer) {
+                let alerts = messageContainer.getElementsByClassName('alert');
+                for (let alert of alerts) {
+                    let bsAlert = new bootstrap.Alert(alert);
+                    bsAlert.close();
+                }
+            }
+        }, 5000);
+    </script>
+{% endif %}
+
+
+
+    <div class="row mt-4">
+        <!-- Filter Form -->
+        <div class="col-lg-3 col-md-4 mb-3">
+            <form method="GET" class="card p-3 shadow-sm">
+                <label for="grade" class="form-label fw-bold">📖 Grade:</label>
+                <select name="grade" class="form-control mb-2">
+                    <option value="">-- Select --</option>
+                    {% for grade in grades %}
+                        <option value="{{ grade }}" {% if selected_grade == grade|stringformat:"s" %}selected{% endif %}>{{ grade }}</option>
+                    {% endfor %}
+                </select>
+                
+                <label for="assessment_type" class="form-label fw-bold">📊 Assessment:</label>
+                <select name="assessment_type" class="form-control mb-3">
+                    <option value="">-- Select --</option>
+                    {% for code, name in assessment_choices %}
+                        <option value="{{ code }}" {% if selected_assessment == code %}selected{% endif %}>{{ name }}</option>
+                    {% endfor %}
+                </select>
+                
+                <button type="submit" class="btn btn-primary w-100">🔍 Load</button>
+            </form>
+        </div>
+
+        <!-- Student Data -->
+        <div class="col-lg-9 col-md-8">
+            {% if students %}
+                <form method="POST">
+                    {% csrf_token %}
+                    <input type="hidden" name="grade" value="{{ selected_grade }}">
+                    <input type="hidden" name="assessment_type" value="{{ selected_assessment }}">
+
+                    <div class="card shadow-sm p-3">
+                        <h5 class="mb-3">✏️ Enter Scores</h5>
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th>🎓 Student ID</th>
+                                        <th>🧑 Name</th>
+                                        <th>🏫 Grade</th>
+                                        <th>📌 Score</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for student in students %}
+                                    <tr>
+                                        <td>{{ student.student_id }}</td>
+                                        <td>{{ student.name }}</td>
+                                        <td>{{ student.grade }}</td>
+                                        <td>
+                                            <input type="hidden" name="student_id" value="{{ student.id }}">
+                                            <input type="number" name="score" class="form-control" min="0" max="100" placeholder="Enter score">
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <button type="submit" class="btn btn-outline-success mt-3 w-100">💾 Save Scores</button>
+                    </div>
+                </form>
+            {% endif %}
+        </div>
+    </div>
+
+
+
+<div  style="background-color: rgb(255, 236, 236); padding: 3px 8px 8px 8px; border-radius: 12px;">
+    <div class="container mt-5">
+        <h5 class="mb-3 text-center">📥 Export Assessment Sheet</h3>
+    
+  
+    
+        <form method="get" action="{% url 'export_student_scores' %}" class="row justify-content-center">
+            {% csrf_token %}
+            
+            <div class="col-md-3 mb-3">
+                <label for="term_id" class="form-label">Select Term:</label>
+                <select name="term_id" class="form-control" required>
+                    <option value="">-- Select Term --</option>
+                    {% for term in terms %}
+                        <option value="{{ term.id }}">{{ term.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+    
+            <div class="col-md-3 mb-3">
+                <label for="assessment_type" class="form-label">Assessment Type:</label>
+                <select name="assessment_type" class="form-control" required>
+                    <option value="">-- Select Assessment Type --</option>
+                    {% for value, label in assessment_choices %}
+                        <option value="{{ value }}">{{ label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+    
+            <div class="col-md-3 mb-3">
+                <label for="grade" class="form-label">Select Grade:</label>
+                <select name="grade" class="form-control">
+                    <option value="">-- Select Grade --</option>
+                    {% for grade in grades %}
+                        <option value="{{ grade }}" {% if grade == selected_grade %}selected{% endif %}>{{ grade }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+    
+            <div class="col-md-3 mb-3 d-flex align-items-end">
+                <button type="submit" class="btn btn-outline-danger w-100">Export Scores</button>
+            </div>
+        </form>
+    
+        <div class="text-center mt-4">
+            <a href="{% url 'upload_student_scores' %}" class="btn btn-outline-primary">Upload Bulk Scores</a>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    window.onload = function () {
+      const teacherName = "{{ teacher.name|escapejs }}";
+      alert("Welcome, " + teacherName + "!");
+    };
+  </script>
+  
+
+
+
+
+    <div class="row mt-5">
+        <div class="col-12">
+            <div class="card p-4 shadow-sm"  style="background-color: #d9f7e0;">
+                <h5 class="mb-3 text-center">📤 Export Student Scores</h5>
+                <form method="GET" action="{% url 'export_scores_csv' %}">
+                    <div class="row">
+                        <div class="col-md-2 mb-3">
+                            <label for="grade" class="form-label fw-bold">📖  Grade:</label>
+                            <select name="grade" class="form-control" required>
+                                <option value="">-- Select Grade --</option>
+                                {% for grade in grades %}
+                                    <option value="{{ grade }}" {% if selected_grade == grade|stringformat:"s" %}selected{% endif %}>{{ grade }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="term" class="form-label fw-bold">📆  Term:</label>
+                            <select name="term" class="form-control" required>
+                                <option value="">-- Select Term --</option>
+                                {% for t in terms %}
+                                    <option value="{{ t.id }}" {% if request.GET.term == t.id|stringformat:"s" %}selected{% endif %}>{{ t.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+
+                        <div class="col-md-4 mb-3">
+                            <label for="assessment_type" class="form-label fw-bold">📊  Assessment Type:</label>
+                            <select name="assessment_type" class="form-control" required>
+                                <option value="">-- Select Assessment --</option>
+                                {% for code, name in assessment_choices %}
+                                    <option value="{{ code }}" {% if selected_assessment == code %}selected{% endif %}>{{ name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="col-md-2" style="padding-top: 30px;">
+                            <button style="padding: 8.4px 7px !important;" type="submit" class="btn btn-outline-success btn-sm">📥 Download CSV</button>
+                        </div>
+                        
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<style>
+    .card {
+        border-radius: 12px;
+    }
+    .table thead {
+        background: #343a40;
+        color: white;
+    }
+    .btn-primary, .btn-success {
+        border-radius: 8px;
+    }
+    .btn-primary:hover {
+        background-color: #0056b3;
+    }
+    .btn-success:hover {
+        background-color: #218838;
+    }
+    
+    @media (max-width: 768px) {
+        .btn {
+            font-size: 14px;
+            padding: 10px;
+        }
+        .card {
+            padding: 10px;
+        }
+        .table thead {
+            font-size: 14px;
+        }
+        .table td {
+            font-size: 14px;
+        }
+    }
+</style>
+
+<script>
+    setTimeout(function() {
+        var messageContainer = document.getElementById("message-container");
+        if (messageContainer) {
+            messageContainer.style.display = "none";
+        }
+    }, 6000);
+</script>
+
+
+<h4 class="mb-3 text-center" style="padding-top: 50px;">📅 Academic Calendar</h4>
+<div id="calendar" style="max-width: 900px; margin: 0 auto; height: 600px;"></div>
+
+<link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
+
+<style>
+    #calendar {
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+        overflow: hidden;
+    }
+    
+    .fc .fc-toolbar {
+        background-color: #f8f9fa;
+        border: none;
+    }
+
+    .fc .fc-toolbar-title {
+        font-size: 1.5rem;
+        font-weight: bold;
+    }
+
+    .fc .fc-button {
+        background-color: #007bff;
+        color: white;
+        border: none;
+    }
+
+    .fc .fc-button:hover {
+        background-color: #0056b3;
+    }
+
+    .fc .fc-daygrid-day {
+        border: 1px solid #f1f1f1;
+    }
+
+    /* Style for events */
+    .fc-event {
+        background-color: #FF0000;
+        color: white;
+    }
+
+    .fc-event:hover {
+        background-color: #ff4c4c;
+    }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var calendarEl = document.getElementById('calendar');
+
+    var calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: 'dayGridMonth',  // Month view
+        headerToolbar: {
+            left: 'prev,next today',
+            center: 'title',
+            right: 'dayGridMonth,timeGridWeek,listWeek'
+        },
+        height: 'auto',  // Ensure the calendar height adjusts automatically
+        events: [
+            {% for event in academic_calendar %}
+            {
+                title: "{{ event.title }}",
+                start: "{{ event.date|date:'Y-m-d' }}",
+                description: "{{ event.description }}",
+                color: "#FF0000" // Customize color
+            },
+            {% endfor %}
+        ],
+        eventClick: function(info) {
+            alert(info.event.title + "\n" + info.event.extendedProps.description);
+        },
+        // More customization options
+        eventColor: '#FF0000',  // Change default event color
+        dayHeaderFormat: { weekday: 'short' }, // Abbreviated day names
+        validRange: {
+            start: '2025-01-01', // Minimum date (start of year 2025, you can adjust this)
+            end: '2025-12-31'   // Maximum date (end of year 2025, you can adjust this)
+        }
+    });
+
+    calendar.render();
+});
+</script>
+
+<style>
+
+
+@media (max-width: 768px) {
+    .fc .fc-toolbar {
+        flex-direction: column; /* Stack buttons and title */
+        align-items: center;
+        text-align: center;
+    }
+
+    .fc .fc-toolbar > div {
+        margin: 5px 0;
+    }
+
+    .fc .fc-button {
+        padding: 5px 8px; /* Reduce button padding */
+        font-size: 12px;  /* Smaller text for buttons */
+    }
+}
+
+
+.fc-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+@media (max-width: 768px) {
+    .fc-toolbar-title {
+        font-size: 16px;
+    }
+}
+
+</style>
+
+{% endblock %}

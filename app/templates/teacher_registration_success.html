@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Teacher Registration Successful</title>
+</head>
+<body>
+    <h2>Registration Successful!</h2>
+    <p>Your login credentials:</p>
+    <p><strong>Email:</strong> {{ email }}</p>
+    <p><strong>Password:</strong> <span style="color: red;">{{ password }}</span></p>
+    <p>Please store this password safely and change it after logging in.</p>
+    <a href="{% url 'teacher_login' %}">Go to Login</a>
+</body>
+</html>

@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center mb-4">🎓 Student List</h2>
+
+  <!-- Filter and Search Form in One Row -->
+<div class="row mb-4">
+    <!-- Grade Filter -->
+    <div class="col-md-6">
+        <form method="GET" class="d-flex align-items-center">
+            <label for="grade" class="form-label fw-bold me-2 mb-0">Grade:</label>
+            <select name="grade" class="form-select me-2">
+                <option value="">-- Select Grade --</option>
+                {% for grade in grades %}
+                    <option value="{{ grade }}" {% if selected_grade == grade|stringformat:"s" %}selected{% endif %}>{{ grade }}</option>
+                {% endfor %}
+            </select>
+            <button type="submit" class="btn btn-outline-primary me-2">🔍</button>
+            <a href="{% url 'student_list' %}" class="btn btn-outline-secondary">🔄</a>
+        </form>
+    </div>
+
+    <!-- Live Search -->
+    <div class="col-md-6 ">
+        <input type="text" id="searchInput" class="form-control" placeholder="🔎 Type to search student name...">
+    </div>
+</div>
+
+
+    <div class="card shadow-sm p-3">
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead class="table-dark">
+                    <tr>
+                        <th>#️⃣ No.</th>
+                        <th>🆔 Student ID</th>
+                        <th>🧑 Name</th>
+                        <th>🏫 Grade</th>
+                        <th>📧 Parent Email</th>
+                        <th>📞 Parent Phone</th>
+                    </tr>
+                </thead>
+                <tbody id="studentTableBody">
+                    {% for student in students %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ student.student_id }}</td>
+                        <td>{{ student.name }}</td>
+                        <td>{{ student.grade }}</td>
+                        <td>{{ student.parent_email|default:"N/A" }}</td>
+                        <td>{{ student.parent_phone }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="text-center text-muted">No students found.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    {% if students %}
+    <div class="pt-3">
+        <a href="{% url 'export_students_csv' %}?grade={{ selected_grade }}" class="btn btn-outline-success mb-3">📥 Export CSV</a>
+    </div>
+    {% endif %}
+</div>
+
+<style>
+    .card { border-radius: 12px; }
+    .table thead { background: #343a40; color: white; }
+    .btn-primary, .btn-success, .btn-secondary { border-radius: 8px; }
+</style>
+
+<script>
+    const searchInput = document.getElementById('searchInput');
+    const tableBody = document.getElementById('studentTableBody');
+
+    searchInput.addEventListener('keyup', function () {
+        const query = this.value;
+        const grade = new URLSearchParams(window.location.search).get('grade') || '';
+
+        fetch(`{% url 'student_list' %}?search=${query}&grade=${grade}`, {
+            headers: { "X-Requested-With": "XMLHttpRequest" }
+        })
+        .then(response => response.json())
+        .then(data => {
+            const students = data.students;
+            tableBody.innerHTML = '';
+
+            if (students.length > 0) {
+                students.forEach((student, index) => {
+                    tableBody.innerHTML += `
+                        <tr>
+                            <td>${index + 1}</td>
+                            <td>${student.id}</td>
+                            <td>${student.name}</td>
+                            <td>${student.grade}</td>
+                            <td>${student.parent_email || 'N/A'}</td>
+                            <td>${student.parent_phone}</td>
+                        </tr>`;
+                });
+            } else {
+                tableBody.innerHTML = `<tr><td colspan="6" class="text-center text-muted">No students found.</td></tr>`;
+            }
+        });
+    });
+</script>
+{% endblock %}

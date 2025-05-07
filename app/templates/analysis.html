@@ -1,0 +1,168 @@
+{% extends "base.html" %}
+{% block content %}
+
+{% load custom_filters %}
+
+<h4 style="padding-top: 20px;" class="mb-4 text-center">📊 Student Performance Analysis</h2>
+
+<div class="container mt-4 justify-content-center" style="padding-bottom: 20px;">
+    <div class="row g-3 align-items-center justify-content-center">
+        <form method="GET" action="{% url 'analysis_view' %}" class="w-100">
+            <div class="row g-3 align-items-center justify-content-center">
+                <!-- Grade Filter (3 Columns) -->
+                <div class="col-md-3">
+                    <label for="grade" class="fw-bold">🎓 Grade:</label>
+                    <select name="grade" id="grade" class="form-select" onchange="this.form.submit()">
+                        <option value="">All Grades</option>
+                        {% for grade in grades %}
+                            <option value="{{ grade.0 }}" {% if selected_grade == grade.0 %}selected{% endif %}>
+                                {{ grade.1 }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label for="term" class="fw-bold">📅 Term:</label>
+                    <select name="term" id="term" class="form-select" onchange="this.form.submit()">
+                        <option value="">All Terms</option>
+                        {% for term in terms %}
+                            <option value="{{ term.0 }}" {% if selected_term == term.0 %}selected{% endif %}>
+                                {{ term.1 }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- Assessment Type Filter (3 Columns) -->
+                <div class="col-md-3">
+                    <label for="assessment" class="fw-bold">📝 Assessment Type:</label>
+                    <select name="category" id="assessment" class="form-select" onchange="this.form.submit()">
+                        {% for assessment in assessment_categories %}
+                            <option value="{{ assessment.0 }}" {% if selected_category == assessment.0 %}selected{% endif %}>
+                                {{ assessment.1 }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- Search Bar (5 Columns) -->
+                <div class="col-md-3">
+                    <label class="fw-bold">🔍 Search:</label>
+                    <input type="text" id="searchBar" class="form-control" placeholder="Search by Student ID or Name..." onkeyup="filterStudents()">
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+
+<script>
+    function filterStudents() {
+        let input = document.getElementById("searchBar").value.toLowerCase();
+        let table = document.querySelector("table tbody");
+        let rows = table.getElementsByTagName("tr");
+    
+        for (let row of rows) {
+            let studentID = row.cells[1].textContent.toLowerCase(); // Column 2: Student ID
+            let studentName = row.cells[2].textContent.toLowerCase(); // Column 3: Student Name
+    
+            if (studentID.includes(input) || studentName.includes(input)) {
+                row.style.display = "";
+            } else {
+                row.style.display = "none";
+            }
+        }
+    }
+    </script>
+    
+{% if students %}
+<!-- Table -->
+<div class="table-responsive container">
+    <table class="table table-hover table-striped table-bordered text-center align-middle">
+        <thead class="table-dark">
+            <tr>
+                <th>🏆 Rank</th>
+                <th>🆔 Student ID</th>
+                <th>👨‍🎓 Name</th>
+                <th>🎓 Grade</th>
+                <th>📊 Total Score</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for student in students %}
+                <tr>
+                    <td class="fw-bold">{{ forloop.counter }}</td>
+                    <td>{{ student.student_id }}</td>
+                    <td>
+                        <a href="{% url 'student_detail' student.id %}" class="text-decoration-none">
+                            {{ student.name }}
+                        </a>
+                    </td>
+                    <td>{{ student.grade }}</td>
+                    <td><strong>{{ student.total_score|floatformat:2 }}</strong></td>
+
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<!-- No Results Found Alert -->
+<div class="alert alert-warning text-center" role="alert">
+    ⚠️ No student scores found for the selected category. Please adjust the filters.
+</div>
+{% endif %}
+
+<!-- Filters Form -->
+<div class="d-flex flex-column align-items-center mt-4">
+ 
+
+    <!-- Centered Button -->
+    <a href="{% url 'assessment_details' %}?grade={{ selected_grade }}&category={{ selected_category }}" class="btn btn-outline-primary">
+        📜 View Details
+    </a>
+</div>
+
+<!-- Subject Breakdown (Hidden by Default) -->
+<div id="detailsView" class="mt-4 text-center" style="display: none;">
+    <h3 class="mb-3">📚 Subject Breakdown</h3>
+    <div class="table-responsive">
+        <table class="table table-hover table-bordered text-center align-middle">
+            <thead class="table-dark">
+                <tr>
+                    <th>👨‍🎓 Name</th>
+                    {% for subject in subjects %}
+                        <th>{{ subject.name }}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for student in students %}
+                    <tr>
+                        <td>{{ student.name }}</td>
+                        {% for subject in subjects %}
+                        <td>{{ student_subject_scores|get_dict_value:student.id|get_dict_value:subject.name|default:"-" }}</td>
+
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+function updateResults() {
+    document.getElementById('filterForm').submit();
+}
+
+function toggleDetailsView() {
+    let detailsDiv = document.getElementById("detailsView");
+    detailsDiv.style.display = detailsDiv.style.display === "none" ? "block" : "none";
+}
+</script>
+
+<!-- Bootstrap CDN -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+{% endblock %}

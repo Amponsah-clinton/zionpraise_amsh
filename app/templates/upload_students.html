@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="d-flex justify-content-center align-items-center" style="min-height: 100vh; padding-bottom: 25rem;">
+  <div class="container my-4" style="max-width: 500px; width: 100%;">
+    <h2 class="text-center mb-4">Upload Students CSV</h2>
+    
+    {% if messages %}
+    <div class="position-relative">
+      <div class="position-absolute top-0 end-0 mt-3 me-3" style="z-index: 1050;">
+        {% for message in messages %}
+          <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  
+
+  {% endif %}
+  
+
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button type="submit" class="btn btn-outline-primary w-100">Upload</button>
+    </form>
+  </div>
+</div>
+
+
+<script>
+  setTimeout(function () {
+    const alerts = document.querySelectorAll('.alert');
+    alerts.forEach(alert => {
+      const bsAlert = new bootstrap.Alert(alert);
+      bsAlert.close();
+    });
+  }, 10000); 
+</script>
+{% endblock %}

@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<style>
+    /* Ensure input group alignment */
+.input-group {
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+/* Style the password input to take up most of the space */
+.input-group input {
+    flex: 1;
+    padding: 10px;
+    border-radius: 5px 0 0 5px; 
+    border: 1px solid #ccc;
+}
+
+/* Style the button to sit neatly beside the input field */
+.input-group button {
+    border: 1px solid #ccc;
+    border-left: none; /* Remove border between input and button */
+    background: white;
+    cursor: pointer;
+    padding: 8px 12px;
+    border-radius: 0 5px 5px 0; /* Rounded corners only on the right */
+}
+
+/* Make sure the icon is centered inside the button */
+#eye-icon {
+    font-size: 1.2rem;
+    vertical-align: middle;
+}
+
+</style>
+<div class="container d-flex justify-content-center align-items-center" style="min-height: 60vh;">
+    <div class="card shadow-lg p-4 rounded" style="width: 350px;">
+        <h3 class="text-center mb-3">Teacher Login</h3>
+        
+        <form method="POST">
+            {% csrf_token %}
+            
+            <div class="mb-3">
+                <label for="email" class="form-label">Email</label>
+                {{ form.email }}
+            </div>
+            
+            <div class="mb-3">
+                <label for="password" class="form-label">Password</label>
+                <div class="input-group">
+                    {{ form.password }}
+                    <button type="button" class="btn btn-outline-secondary" id="toggle-password">
+                        <span id="eye-icon">👁️</span> <!-- Toggle icon -->
+                    </button>
+                </div>
+            </div>
+            
+            {% if request.GET.next %}
+                <input type="hidden" name="next" value="{{ request.GET.next }}">
+            {% endif %}
+
+            <button type="submit" class="btn btn-outline-primary w-100">Login</button>
+        </form>
+
+        {% if messages %}
+            <div class="mt-3">
+                {% for message in messages %}
+                    <div class="alert alert-danger">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+    /* Custom styles */
+    input {
+        width: 100%;
+        padding: 10px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+    }
+</style>
+
+<script>
+    // Toggle password visibility
+    document.addEventListener("DOMContentLoaded", function() {
+        var togglePassword = document.getElementById("toggle-password");
+        var passwordField = document.querySelector("#id_password");
+        var eyeIcon = document.getElementById("eye-icon");
+
+        togglePassword.addEventListener("click", function () {
+            if (passwordField.type === "password") {
+                passwordField.type = "text";  // Show password
+                eyeIcon.textContent = "🙈";  // Change icon
+            } else {
+                passwordField.type = "password";  // Hide password
+                eyeIcon.textContent = "👁️";  // Change back
+            }
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        h1, h2, h3 {
+            color: #2c3e50;
+            margin: 0;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            font-size: 12px;
+        }
+        th, td {
+            border: 1px solid #bdc3c7;
+            padding: 6px;
+            text-align: center;
+        }
+        th {
+            background-color: #ecf0f1;
+        }
+        .term-title {
+            margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Score Report for {{ student.name }}</h1>
+    <p><strong>Grade:</strong> {{ student.grade.name }}</p>
+    <p><strong>Parent Email:</strong> {{ student.parent_email }}</p>
+
+    {% for term, subjects in scores_by_term.items %}
+        <h2 class="term-title">{{ term.name }}</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Subject</th>
+                    {% for key, label in assessment_choices %}
+                        <th>{{ label }}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for subject, assessments in subjects.items %}
+                    <tr>
+                        <td>{{ subject }}</td>
+                        {% for key, label in assessment_choices %}
+                            <td>{{ assessments|get_item:key|default:"-" }}</td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endfor %}
+</body>
+</html>

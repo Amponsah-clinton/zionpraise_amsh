@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}ZPEC-AMS{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/FortAwesome/font-awesome/css/font-awesome.min.css">
+    <style>
+       body {
+  padding-bottom: 30px;
+  position: relative;
+  min-height: 100%;
+}
+
+a {
+  transition: background 0.2s, color 0.2s;
+}
+a:hover,
+a:focus {
+  text-decoration: none;
+}
+
+#wrapper {
+  padding-left: 0;
+  transition: all 0.5s ease;
+  position: relative;
+}
+
+#sidebar-wrapper {
+  z-index: 1000;
+  position: fixed;
+  left: 250px;
+  width: 0;
+  height: 100%;
+  margin-left: -250px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background: #222;
+  transition: all 0.5s ease;
+}
+
+#wrapper.toggled #sidebar-wrapper {
+  width: 250px;
+}
+
+.sidebar-brand {
+  position: absolute;
+  top: 0;
+  width: 250px;
+  text-align: center;
+  padding: 20px 0;
+}
+.sidebar-brand h2 {
+  margin: 0;
+  font-weight: 600;
+  font-size: 24px;
+  color: #fff;
+}
+
+.sidebar-nav {
+  position: absolute;
+  top: 75px;
+  width: 250px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.sidebar-nav > li {
+  text-indent: 10px;
+  line-height: 42px;
+}
+.sidebar-nav > li a {
+  display: block;
+  text-decoration: none;
+  color: #757575;
+  font-weight: 600;
+  font-size: 18px;
+}
+.sidebar-nav > li > a:hover,
+.sidebar-nav > li.active > a {
+  text-decoration: none;
+  color: #fff;
+  background: #F8BE12;
+}
+.sidebar-nav > li > a i.fa {
+  font-size: 24px;
+  width: 60px;
+}
+
+#navbar-wrapper {
+    width: 100%;
+    position: absolute;
+    z-index: 2;
+}
+#wrapper.toggled #navbar-wrapper {
+    position: absolute;
+    margin-right: -250px;
+}
+#navbar-wrapper .navbar {
+  border-width: 0 0 0 0;
+  background-color: #eee;
+  font-size: 24px;
+  margin-bottom: 0;
+  border-radius: 0;
+}
+#navbar-wrapper .navbar a {
+  color: #757575;
+}
+#navbar-wrapper .navbar a:hover {
+  color: #F8BE12;
+}
+
+#content-wrapper {
+  width: 100%;
+  position: absolute;
+  padding: 15px;
+  top: 100px;
+}
+#wrapper.toggled #content-wrapper {
+  position: absolute;
+  margin-right: -250px;
+}
+
+@media (min-width: 992px) {
+  #wrapper {
+    padding-left: 250px;
+  }
+  
+  #wrapper.toggled {
+    padding-left: 60px;
+  }
+
+  #sidebar-wrapper {
+    width: 250px;
+  }
+  
+  #wrapper.toggled #sidebar-wrapper {
+    width: 60px;
+  }
+  
+  #wrapper.toggled #navbar-wrapper {
+    position: absolute;
+    margin-right: -190px;
+}
+  
+  #wrapper.toggled #content-wrapper {
+    position: absolute;
+    margin-right: -190px;
+  }
+
+  #navbar-wrapper {
+    position: relative;
+  }
+
+  #wrapper.toggled {
+    padding-left: 60px;
+  }
+
+  #content-wrapper {
+    position: relative;
+    top: 0;
+  }
+
+  #wrapper.toggled #navbar-wrapper,
+  #wrapper.toggled #content-wrapper {
+    position: relative;
+    margin-right: 60px;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  #wrapper {
+    padding-left: 60px;
+  }
+
+  #sidebar-wrapper {
+    width: 60px;
+  }
+  
+#wrapper.toggled #navbar-wrapper {
+    position: absolute;
+    margin-right: -250px;
+}
+  
+  #wrapper.toggled #content-wrapper {
+    position: absolute;
+    margin-right: -250px;
+  }
+
+  #navbar-wrapper {
+    position: relative;
+  }
+
+  #wrapper.toggled {
+    padding-left: 250px;
+  }
+
+  #content-wrapper {
+    position: relative;
+    top: 0;
+  }
+
+  #wrapper.toggled #navbar-wrapper,
+  #wrapper.toggled #content-wrapper {
+    position: relative;
+    margin-right: 250px;
+  }
+}
+
+@media (max-width: 767px) {
+  #wrapper {
+    padding-left: 0;
+  }
+
+  #sidebar-wrapper {
+    width: 0;
+  }
+
+  #wrapper.toggled #sidebar-wrapper {
+    width: 250px;
+  }
+  #wrapper.toggled #navbar-wrapper {
+    position: absolute;
+    margin-right: -250px;
+  }
+
+  #wrapper.toggled #content-wrapper {
+    position: absolute;
+    margin-right: -250px;
+  }
+
+  #navbar-wrapper {
+    position: relative;
+  }
+
+  #wrapper.toggled {
+    padding-left: 250px;
+  }
+
+  #content-wrapper {
+    position: relative;
+    top: 0;
+  }
+
+  #wrapper.toggled #navbar-wrapper,
+  #wrapper.toggled #content-wrapper {
+    position: relative;
+    margin-right: 250px;
+  }
+}
+    </style>
+</head>
+<body >
+    <div id="wrapper">
+        <aside id="sidebar-wrapper" style="color: red;">
+            <div class="sidebar-brand">
+              <a style="text-decoration: none;" href="{% url 'home' %}"> <h2>ZPEC</h2></a>
+            </div>
+            <ul class="sidebar-nav">
+              {% if request.user.is_superuser %}
+                  <li><a href="{% url 'add_student' %}"><i class="fa fa-user-plus"></i> Add Student</a></li>
+                  <li><a href="{% url 'student_list' %}"><i class="fa fa-users"></i> Students</a></li>
+                  <li><a href="{% url 'teacher_register' %}"><i class="fa fa-user"></i> Register Teacher</a></li>
+                  <li><a href="{% url 'teacher_dashboard' %}"><i class="fa fa-chalkboard-teacher"></i> Teacher Dashboard</a></li>
+                  <li><a href="{% url 'analysis' %}"><i class="fa fa-chart-bar"></i> Analysis</a></li>
+                  <li><a href="{% url 'upload_student_scores' %}"><i class="fa fa-calendar-plus"></i> Upload Scores </a></li>
+                  <li><a href="{% url 'performance' %}"><i class="fa fa-trophy"></i> Performance</a></li>
+                  <li><a href="{% url 'teacher_list' %}"><i class="fa fa-chalkboard-teacher"></i> Teachers</a></li>
+                  <li><a href="{% url 'add_event' %}"><i class="fa fa-calendar-plus"></i> Add Event</a></li>
+              {% elif request.user.is_staff or request.user.teacher_profile %}
+                  <li><a href="{% url 'teacher_dashboard' %}"><i class="fa fa-chalkboard-teacher"></i> Teacher Dashboard</a></li>
+                  <li><a href="{% url 'student_list' %}"><i class="fa fa-users"></i> Students</a></li>
+                  <li><a href="{% url 'analysis' %}"><i class="fa fa-chart-bar"></i> Analysis</a></li>
+                  <li><a href="{% url 'upload_student_scores' %}"><i class="fa fa-layer-group"></i> Upload Bulk Scores</a></li>
+              {% elif request.session.parent_logged_in %}
+                  <li><a href="{% url 'student_detail' student_id=request.session.student_ids.0 %}">
+                      <i class="fa fa-user-graduate"></i> Details</a></li>
+              {% else %}
+                  <!-- Only show these if no parent is logged in -->
+                  <li><a href="{% url 'parent_login' %}"><i class="fa fa-sign-in"></i> Parent Login</a></li>
+                  <li><a href="{% url 'teacher_login' %}"><i class="fa fa-sign-in"></i> Teacher Login</a></li>
+              {% endif %}
+          
+              {% if request.user.is_authenticated or request.session.parent_logged_in %}
+                  <li class="logout-btn">
+                      <a href="{% url 'logout' %}">
+                          <i style="color: red;" class="fa fa-sign-out-alt"></i> Logout
+                      </a>
+                  </li>
+              {% endif %}
+          </ul>
+          
+          
+          <style>
+
+.sidebar-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh; 
+}
+
+
+.sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    padding: 0;
+    margin: 0;
+}
+
+
+.sidebar-nav li.logout-btn {
+    margin-top: auto; 
+}
+
+
+@media (max-width: 768px) {
+    .sidebar-container {
+        height: auto; 
+    }
+    .sidebar-nav {
+        flex-direction: column;
+    }
+    .sidebar-nav li.logout-btn {
+        margin-top: 10px; 
+    }
+}
+
+          </style>
+            
+        </aside>
+        
+        <div id="navbar-wrapper" style="padding: 10px 10px 0px 0px;">
+                <div class="container-fluid">
+                    <a href="#" class="navbar-brand" id="sidebar-toggle"><i class="fa fa-bars"></i></a>
+                </div>
+        </div>
+        
+        <section id="content-wrapper">
+            <div class="container">
+                {% block content %}{% endblock %}
+            </div>
+        </section>
+    </div>
+
+    <script>
+   const $button  = document.querySelector('#sidebar-toggle');
+const $wrapper = document.querySelector('#wrapper');
+
+$button.addEventListener('click', (e) => {
+  e.preventDefault();
+  $wrapper.classList.toggle('toggled');
+});
+
+
+    </script>
+ <style>
+  html, body {
+    height: 100%;
+  }
+  body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+  main {
+    flex: 1;
+  }
+</style>
+<footer class="footer text-center py-3 bg-light mt-auto">
+  <p class="ss" style="font-family: Georgia, 'Times New Roman', Times, serif; font-size: 19px;">
+    &copy; <span id="year"></span> ZPEC-Hillside Campus AMS. All rights reserved.
+  </p>
+</footer>
+
+<style>
+  @media (max-width: 767.98px) {
+    .footer {
+      padding: 0px 5px !important;
+    }
+    .ss {
+      font-size: 18px !important;
+    }
+  }
+    
+</style>
+
+<script>
+  document.getElementById('year').textContent = new Date().getFullYear();
+</script>
+
+
+
+
+</body>
+</html>
