@@ -30,52 +30,61 @@
 {% endif %}
 
 
-
-<div class="container mt-4">
-    <h2 class="text-center">👨‍🎓 {{ student.name }}'s Details</h2>
-
-    <div class="container mt-3">
-        <div class="card">
-            <div class="card-body p-2">
-                <div class="row text-center">
-                    <div class="col-4">
-                        <p class="mb-1"><strong>🆔 ID:</strong> {{ student.student_id }}</p>
-                    </div>
-                    <div class="col-4">
-                        <p class="mb-1"><strong>🎓 Grade:</strong> {{ student.grade.upper }}</p>
-                    </div>
-                    <div class="col-4">
-                        <p class="mb-1"><strong>📌 Total Students:</strong> {{ total_students }}</p>
-                    </div>
+<div class="container-fluid mt-3 p-0">
+    <div class="card mx-1">
+        <div class="card-body p-2">
+            <div class="row text-center">
+                <div class="col-4">
+                    <p class="mb-1"><strong>🆔 ID:</strong> {{ student.student_id }}</p>
+                </div>
+                <div class="col-4">
+                    <p class="mb-1"><strong>🎓 Grade:</strong> {{ student.grade.upper }}</p>
+                </div>
+                <div class="col-4">
+                    <p class="mb-1"><strong>📌 Total Students:</strong> {{ total_students }}</p>
                 </div>
             </div>
         </div>
     </div>
+</div>
 
+<div class="container-fluid mt-3 p-0 custom-padding">
+    <div class="card mx-1">
+        <div class="card-body p-2 pb-sm-4">
+            <div class="row text-center">
+                <div class="col-4">
+                    <p class="mb-1"><strong>👨‍👩‍👧 Parent Name:</strong> {{ student.parent_name|default:"N/A" }}</p>
+                </div>
+                <div class="col-4">
+                    <p class="mb-1"><strong>📧 Parent Email:</strong> {{ student.parent_email|default:"N/A" }}</p>
+                </div>
+                <div class="col-4">
+                    <p class="mb-1"><strong>📞 Parent Phone:</strong> {{ student.parent_phone }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<style>
+    @media (max-width: 576px) {
+    .custom-padding {
+        padding-bottom: 20px !important;
+    }
+}
+
+</style>
+
+
+    
 
     <script>
         window.onload = function() {
             alert("Zion Praise Educational Complex welcomes you, {{ student.parent_name }}!");
         };
     </script>
-
-    <div class="container mt-3">
-        <div class="card">
-            <div class="card-body p-2">
-                <div class="row text-center">
-                    <div class="col-4">
-                        <p class="mb-1"><strong>📧 Parent Name:</strong> {{ student.parent_name|default:"N/A" }}</p>
-                    </div>
-                    <div class="col-4">
-                        <p class="mb-1"><strong>📧 Parent Email:</strong> {{ student.parent_email|default:"N/A" }}</p>
-                    </div>
-                    <div class="col-4">
-                        <p class="mb-1"><strong>📞 Parent Phone:</strong> {{ student.parent_phone }}</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+    
 
     <div class="table-responsive">
         <table class="table table-hover table-bordered text-center">
@@ -156,20 +165,39 @@
 
 
     <!-- Graph Display -->
-    <h3 style="padding-top: 30px;" class="mt-4 text-center">📈 Score Distribution</h3 >
-        <div class="container">
-            <canvas id="scoreChart"></canvas>
-          </div>
- 
-          <style>
-            canvas {
- 
-@media (max-width: 768px) {
-  #scoreChart {
-    display: block !important;
-  }
-}
-
+    <h3 style="padding-top: 30px;" class="mt-4 text-center">📈 Score Distribution</h3>
+    <div class="container">
+        <canvas id="scoreChart"></canvas>
+    </div>
+    
+    <style>
+      /* Make the chart responsive on all screen sizes */
+      #scoreChart {
+        width: 100% !important;
+        height: 400px !important; /* Default height for larger screens */
+      }
+    
+      /* Adjust chart size for smaller screens */
+      @media (max-width: 768px) {
+        #scoreChart {
+          height: 350px !important; /* Set smaller height for better visibility on mobile */
+        }
+      }
+    
+      @media (max-width: 576px) {
+        #scoreChart {
+          height: 250px !important;  /* Further reduce the height for very small screens */
+        }
+      }
+    
+      @media (max-width: 576px) {
+        .container {
+          padding-left: 10px;
+          padding-right: 10px;
+        }
+      }
+    </style>
+    
           </style>
 
 
